@@ -1,0 +1,32 @@
+﻿@model IEnumerable<SD_330_W22SD_Assignment.Models.Question>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Stack Overflow</h1>
+
+<button >Post a question</button>
+
+<h3>Recent Questions</h3>
+
+<div>
+    @foreach(Question question in Model)
+    {
+        <div>
+            <h5>Title: @question.Title</h5>
+            <p>Posted by: @question.User.UserName</p>
+            <p>Date Posted: @question.CreatedDate</p>
+            <hr>
+            <p>@question.Body</p>
+            @foreach(Tag tag in question.Tags)
+            {
+                <p style="display:inline">@tag.Name</p>
+            }
+            <hr>
+            <button>Answer</button>
+        </div>
+    }
+
+</div>
