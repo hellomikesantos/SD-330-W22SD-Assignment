@@ -11,6 +11,6 @@ namespace SD_330_W22SD_Assignment.Data
         {
         }
         public DbSet<SD_330_W22SD_Assignment.Models.Vehicle>? Vehicle { get; set; }
-        public DbSet<SD_330_W22SD_Assignment.Models.Question>? Question { get; set; }
+        public DbSet<SD_330_W22SD_Assignment.Models.Question> Question { get; set; }
     }
 }

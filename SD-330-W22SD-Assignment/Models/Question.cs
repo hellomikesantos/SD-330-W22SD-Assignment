@@ -8,11 +8,13 @@
         public DateTime CreatedDate { get; set; }
         public ApplicationUser User { get; set; }
         public string? UserId { get; set; }
+        public bool IsBeingAnswered { get; set; }
         public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
         public ICollection<Answer> Answers { get; set; } = new HashSet<Answer>();
-        public Question()
+        public Question()   
         {
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.Today;
+            IsBeingAnswered = false;
         }
     }
 }

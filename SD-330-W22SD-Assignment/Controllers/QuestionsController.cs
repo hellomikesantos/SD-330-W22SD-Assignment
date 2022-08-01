@@ -30,12 +30,82 @@ namespace SD_330_W22SD_Assignment.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> PostQuestion()
-        //{
+ 
+        public IActionResult PostQuestion()
+        {
+            Question question = new Question();
+            return View(question);
+        }
 
-        //}
+        [HttpPost]
+        public async Task<IActionResult> PostQuestion(string? title, string? body, Question question, string? tags)
+        {
+            if (title != null && body != null)
+            {
+                try
+                {
+                    Question q = new Question();
+                    q.Title = title;
+                    q.Body = body;
+                    q.CreatedDate = DateTime.Today;
 
+                    string userName = User.Identity.Name;
+
+                    ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
+                    q.User = user;
+                    q.User.Id = user.Id;
+                    user.Questions.Add(q);
+
+                    _context.Question.Add(q);
+                    
+                    _context.SaveChanges();
+                }
+                catch(Exception ex)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult AnswerQuestion(Question question)
+        {
+            //Question question = _context.Question.Include(q => q.Answers).
+            //    ThenInclude(a => a.User).FirstOrDefault(q => q.Id == questionId);
+            
+            return View(question);
+        }
+
+        [HttpPost]
+        public IActionResult AnswerQuestion(int? questionId, string? answer)
+        {
+            if (questionId != null && answer != null)
+            {
+                try
+                {
+                    Question answeredQuestion = _context.Question.First(q => q.Id == questionId);
+                    Answer submittedAnswer = new Answer();
+
+                    string userName = User.Identity.Name;
+                    ApplicationUser user = _context.Users.First(u => u.UserName == userName);
+
+                    submittedAnswer.QuestionId = (int)questionId;
+                    submittedAnswer.Body = answer;
+                    submittedAnswer.User = user;
+                    submittedAnswer.UserId = user.Id;
+
+                    answeredQuestion.Answers.Add(submittedAnswer);
+                    answeredQuestion.IsBeingAnswered = false;
+                    _context.SaveChanges();
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Home");
+
+                }
+            }
+            return RedirectToAction("View");
+        }
         //[HttpPost]
         //public async Task<ActionResult> Index(int? questionId)
         //{

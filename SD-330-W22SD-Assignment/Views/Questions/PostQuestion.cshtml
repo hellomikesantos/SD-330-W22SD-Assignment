@@ -1,0 +1,43 @@
+﻿@model SD_330_W22SD_Assignment.Models.Question
+
+@{
+    ViewData["Title"] = "PostQuestion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Post your question</h1>
+
+<h4>Feel free to be as detailed as possible!</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="PostQuestion" method="post" asp-route-question="@Model">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <input name="title" class="form-control" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <textarea name="body" class="form-control" rows="10"></textarea>
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label> 
+                <input name="tags" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Post Question" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<br />
+<div>
+    <a asp-action="Index">Back to Main Page</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

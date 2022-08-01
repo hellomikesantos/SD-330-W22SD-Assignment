@@ -6,10 +6,12 @@
 }
 
 <h1>Stack Overflow</h1>
+<form>
+    <button asp-action="PostQuestion">Post a question</button>
+</form>
 
-<button >Post a question</button>
 
-<h3>Recent Questions</h3>
+<h3></h3>
 
 <div>
     @foreach(Question question in Model)
@@ -18,6 +20,7 @@
             <h5>Title: @question.Title</h5>
             <p>Posted by: @question.User.UserName</p>
             <p>Date Posted: @question.CreatedDate</p>
+            <p>Answers: @question.Answers.Count</p>
             <hr>
             <p>@question.Body</p>
             @foreach(Tag tag in question.Tags)
@@ -25,7 +28,10 @@
                 <p style="display:inline">@tag.Name</p>
             }
             <hr>
-            <button>Answer</button>
+            <form>
+                <button asp-action="AnswerQuestion" asp-route-question="@question">Answer</button>
+            </form>
+            
         </div>
     }
 
