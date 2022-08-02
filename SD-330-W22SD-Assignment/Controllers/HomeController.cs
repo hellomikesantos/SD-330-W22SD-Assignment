@@ -7,6 +7,7 @@ namespace SD_330_W22SD_Assignment.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        
 
         public HomeController(ILogger<HomeController> logger)
         {

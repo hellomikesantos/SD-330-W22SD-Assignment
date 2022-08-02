@@ -11,8 +11,6 @@
 </form>
 
 
-<h3></h3>
-
 <div>
     @foreach(Question question in Model)
     {
@@ -23,15 +21,21 @@
             <p>Answers: @question.Answers.Count</p>
             <hr>
             <p>@question.Body</p>
-            @foreach(Tag tag in question.Tags)
-            {
-                <p style="display:inline">@tag.Name</p>
-            }
+
             <hr>
-            <form>
-                <button asp-action="AnswerQuestion" asp-route-question="@question">Answer</button>
-            </form>
-            
+            <h6><a asp-action="AnswerQuestion" asp-route-questionId="@question.Id" style="text-decoration: none">
+                Answer this question</a></h6>
+            <br>
+@*            @foreach(Tag tag in question.Tags)
+            {
+                if(tag != null)
+                {
+                    <p>@tag.Name</p>
+                }
+                
+            }*@
+
+            <hr>
         </div>
     }
 

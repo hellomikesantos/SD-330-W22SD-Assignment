@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<Question> Question { get; set; } = new HashSet<Question>();
+        //public int QuestionId { get; set; }
+        //public Question Question { get; set; }
+        //public ICollection<Question> Questions { get; set; } = new HashSet<Question>();
     }
 }

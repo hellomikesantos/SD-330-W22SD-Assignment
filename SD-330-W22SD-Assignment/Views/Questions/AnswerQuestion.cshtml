@@ -1,5 +1,5 @@
 ﻿@model SD_330_W22SD_Assignment.Models.Question
-
+@ViewBag.Message
 <h1>@Model.Title</h1>
 <p>@Model.Body</p>
 
@@ -12,7 +12,7 @@
 }
 <h5>Respond here:</h5>
 <div>
-    <form asp-action="AnswerQuestion" asp-route-questionId="@Model.Id" method="post" >
+    <form asp-action="AnswerQuestion" asp-route-questionId="@Model.Id" method="post">
         <textarea name="answer" rows="10"></textarea>
         <button>Submit</button>
     </form>
@@ -20,6 +20,5 @@
 <br />
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

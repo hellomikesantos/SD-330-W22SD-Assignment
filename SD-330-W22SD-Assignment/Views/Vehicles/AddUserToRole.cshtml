@@ -1,0 +1,10 @@
+﻿@*
+@model UserAndRole
+
+<h2>Add User To Role</h2>
+<form asp-action="AddUserToRole" method="post">
+    <select asp-items="@Model.Users" name="userId"></select>
+    <select asp-items=@Model.Roles name="roleId"></select>
+
+    <button type="submit"></button>
+</form>*@

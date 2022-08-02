@@ -9,19 +9,88 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SD_330_W22SD_Assignment.Data;
 using SD_330_W22SD_Assignment.Models;
+using SD_330_W22SD_Assignment.Models.ViewModels;
 
 namespace SD_330_W22SD_Assignment.Controllers
 {
     [Authorize]
     public class VehiclesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private ApplicationDbContext _context;
+        private UserManager<ApplicationUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
 
-        public VehiclesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public VehiclesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, 
+            RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
+        }
+
+        public IActionResult AddRole()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddRole(string? roleName)
+        {
+            if(roleName != null)
+            {
+                try
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(roleName));
+                    await _context.SaveChangesAsync();
+
+                    ViewBag.Message = $"Added new role '{roleName}'";
+                    return View();
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                    
+
+            }
+            return View();
+        }
+
+        //[Authorize(Roles = Admin)]
+        public IActionResult AddUSerToRole()
+        {
+            UserAndRole vm = new UserAndRole(
+            _context.Users.ToList(),
+            _context.Roles.ToList());
+            return View(vm);
+        }
+        
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddUserToRole(string userId, string roleId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            IdentityRole role = await _roleManager.FindByIdAsync(roleId);
+
+            string userName = User.Identity.Name;
+            ApplicationUser currentUser = await _userManager.FindByNameAsync(userName);
+
+            // if the current user is not an admin do not allow
+            //if(_userManager.IsInRoleAsync())
+
+            //bool isInRole = await _userManager.IsInRoleAsync(user, role.Name);
+
+            //if (!isInRole)
+            //{
+            //    await _userManager.AddToRoleAsync(user, role.Name);
+            //    await _context.SaveChangesAsync();
+
+
+            //}
+            UserAndRole vm = new UserAndRole(
+                _context.Users.ToList(),
+                _context.Roles.ToList());
+            return View();
         }
 
         // GET: Vehicles

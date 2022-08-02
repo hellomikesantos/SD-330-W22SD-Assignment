@@ -14,19 +14,22 @@
         <form asp-action="PostQuestion" method="post" asp-route-question="@Model">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label class="control-label"></label>
+                <label class="control-label">Title</label>
                 <input name="title" class="form-control" />
                 <span class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
-                <label class="control-label"></label>
+                <label class="control-label">Your question</label>
                 <textarea name="body" class="form-control" rows="10"></textarea>
                 <span class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
-                <label class="control-label"></label> 
+                <label class="control-label">Tags (Seperate each tag with a comma.)</label>
                 <input name="tags" class="form-control" />
             </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Post Question" class="btn btn-primary" />
             </div>

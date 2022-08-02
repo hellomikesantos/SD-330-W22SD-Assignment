@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SD_330_W22SD_Assignment.Data;
 
@@ -11,9 +12,10 @@ using SD_330_W22SD_Assignment.Data;
 namespace SD_330_W22SD_Assignment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220802200045_AddDbSetForAnswersTags")]
+    partial class AddDbSetForAnswersTags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,7 +173,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag", (string)null);
+                    b.ToTable("QuestionTag");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Answer", b =>
@@ -198,7 +200,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Answer", (string)null);
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.ApplicationUser", b =>
@@ -295,7 +297,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Tag", b =>
@@ -312,7 +314,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tag", (string)null);
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Vehicle", b =>
@@ -341,7 +343,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Vehicle", (string)null);
+                    b.ToTable("Vehicle");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -27,6 +27,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         {
             var applicationDbContext = _context.Question.Include(q => q.User).
                 OrderByDescending(q => q.Id);
+            
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,7 +39,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostQuestion(string? title, string? body, Question question, string? tags)
+        public async Task<IActionResult> PostQuestion(string? title, string? body, string? tagsString)
         {
             if (title != null && body != null)
             {
@@ -59,6 +60,17 @@ namespace SD_330_W22SD_Assignment.Controllers
                     _context.Question.Add(q);
                     
                     _context.SaveChanges();
+                    if(tagsString != null)
+                    {
+                        List<string> tagsList = tagsString.Split(',').ToList();
+                        foreach(string tagString in tagsList)
+                        {
+                            Tag tag = new Tag();
+                            tag.Name = tagString;
+                            //q.Tags.Add(tag);
+                            //tag.Questions.Add(q);
+                        }
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -68,26 +80,30 @@ namespace SD_330_W22SD_Assignment.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult AnswerQuestion(Question question)
+
+        
+        public async Task<IActionResult> AnswerQuestion(int questionId)
         {
-            //Question question = _context.Question.Include(q => q.Answers).
-            //    ThenInclude(a => a.User).FirstOrDefault(q => q.Id == questionId);
+            //List<Question> questionsList = _context.Question.ToList();
+
+            Question question = await _context.Question.Include(q => q.Answers).ThenInclude(a => a.User).FirstAsync(q => q.Id == questionId);
+
             
             return View(question);
         }
 
         [HttpPost]
-        public IActionResult AnswerQuestion(int? questionId, string? answer)
+        public async Task<IActionResult> AnswerQuestion(int? questionId, string? answer)
         {
             if (questionId != null && answer != null)
             {
                 try
                 {
-                    Question answeredQuestion = _context.Question.First(q => q.Id == questionId);
+                    Question answeredQuestion = await _context.Question.Include(q => q.Answers).ThenInclude(a => a.User).FirstAsync(q => q.Id == questionId);
                     Answer submittedAnswer = new Answer();
 
                     string userName = User.Identity.Name;
-                    ApplicationUser user = _context.Users.First(u => u.UserName == userName);
+                    ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
 
                     submittedAnswer.QuestionId = (int)questionId;
                     submittedAnswer.Body = answer;
@@ -95,16 +111,22 @@ namespace SD_330_W22SD_Assignment.Controllers
                     submittedAnswer.UserId = user.Id;
 
                     answeredQuestion.Answers.Add(submittedAnswer);
+                    int count = answeredQuestion.Answers.Count();
+
                     answeredQuestion.IsBeingAnswered = false;
+
+                    user.Answers.Add(submittedAnswer);
+
+                    _context.Answer.Add(submittedAnswer);
+                    ViewBag.Message = "Answer submitted";
                     _context.SaveChanges();
                 }
-                catch
+                catch (Exception ex)
                 {
                     return RedirectToAction("Index", "Home");
-
                 }
             }
-            return RedirectToAction("View");
+            return RedirectToAction("AnswerQuestion", new { questionId });
         }
         //[HttpPost]
         //public async Task<ActionResult> Index(int? questionId)
