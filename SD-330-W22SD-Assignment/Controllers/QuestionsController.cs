@@ -68,7 +68,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                             Tag tag = new Tag();
                             tag.Name = tagString;
                             //q.Tags.Add(tag);
-                            //tag.Questions.Add(q);
+                            tag.Questions.Add(q);
                         }
                     }
                 }
@@ -86,8 +86,9 @@ namespace SD_330_W22SD_Assignment.Controllers
         {
             //List<Question> questionsList = _context.Question.ToList();
 
-            Question question = await _context.Question.Include(q => q.Answers).ThenInclude(a => a.User).FirstAsync(q => q.Id == questionId);
-
+            Question question = await _context.Question
+                .Include(q => q.Comments).ThenInclude(c => c.User)
+                .Include(q => q.Answers).ThenInclude(a => a.User).FirstAsync(q => q.Id == questionId);
             
             return View(question);
         }
@@ -119,6 +120,7 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     _context.Answer.Add(submittedAnswer);
                     ViewBag.Message = "Answer submitted";
+
                     _context.SaveChanges();
                 }
                 catch (Exception ex)
@@ -128,6 +130,40 @@ namespace SD_330_W22SD_Assignment.Controllers
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
         }
+
+        public async Task<IActionResult> AddComment(int? questionId, string? comment)
+        {
+            if(questionId != null && comment != null)
+            {
+                try
+                {
+                    Question commentedQuestion = await _context.Question
+                        .Include(q => q.Comments).ThenInclude(c => c.User)
+                        .Include(q => q.Answers).ThenInclude(a => a.User)
+                        .FirstAsync(q => q.Id == questionId);
+
+                    CommentToQuestion submittedComment = new CommentToQuestion();
+                    submittedComment.Body = comment;
+
+                    string userName = User.Identity.Name;
+                    ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
+                    submittedComment.User = user;
+                    submittedComment.UserId = user.Id;
+
+                    commentedQuestion.Comments.Add(submittedComment);
+                    
+                    _context.SaveChanges();
+
+                    return RedirectToAction("AnswerQuestion", new { questionId });
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return RedirectToAction("AnswerQuestion", new { questionId });
+        }
+
         //[HttpPost]
         //public async Task<ActionResult> Index(int? questionId)
         //{
