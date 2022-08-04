@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SD_330_W22SD_Assignment.Data;
 
@@ -11,9 +12,10 @@ using SD_330_W22SD_Assignment.Data;
 namespace SD_330_W22SD_Assignment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220803184748_AddTagsICollectionInQuestion")]
+    partial class AddTagsICollectionInQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,21 +161,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("QuestionTag", b =>
-                {
-                    b.Property<int>("QuestionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("QuestionsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("QuestionTag", (string)null);
-                });
-
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Answer", b =>
                 {
                     b.Property<int>("Id")
@@ -198,7 +185,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Answer", (string)null);
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.ApplicationUser", b =>
@@ -266,33 +253,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SD_330_W22SD_Assignment.Models.CommentToAnswer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AnswerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CommentToAnswer", (string)null);
-                });
-
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.CommentToQuestion", b =>
                 {
                     b.Property<int>("Id")
@@ -317,7 +277,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentToQuestion", (string)null);
+                    b.ToTable("CommentToQuestion");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Question", b =>
@@ -349,7 +309,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Tag", b =>
@@ -364,9 +324,14 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("QuestionId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Tag", (string)null);
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Vehicle", b =>
@@ -395,7 +360,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Vehicle", (string)null);
+                    b.ToTable("Vehicle");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -449,21 +414,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QuestionTag", b =>
-                {
-                    b.HasOne("SD_330_W22SD_Assignment.Models.Question", null)
-                        .WithMany()
-                        .HasForeignKey("QuestionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SD_330_W22SD_Assignment.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Answer", b =>
                 {
                     b.HasOne("SD_330_W22SD_Assignment.Models.Question", "Question")
@@ -477,23 +427,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("Question");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SD_330_W22SD_Assignment.Models.CommentToAnswer", b =>
-                {
-                    b.HasOne("SD_330_W22SD_Assignment.Models.Answer", "Answer")
-                        .WithMany("Comments")
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SD_330_W22SD_Assignment.Models.ApplicationUser", "User")
-                        .WithMany("CommentsToAnswer")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Answer");
 
                     b.Navigation("User");
                 });
@@ -524,6 +457,13 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Tag", b =>
+                {
+                    b.HasOne("SD_330_W22SD_Assignment.Models.Question", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("QuestionId");
+                });
+
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Vehicle", b =>
                 {
                     b.HasOne("SD_330_W22SD_Assignment.Models.ApplicationUser", "User")
@@ -533,16 +473,9 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Answer", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Answers");
-
-                    b.Navigation("CommentsToAnswer");
 
                     b.Navigation("Questions");
 
@@ -554,6 +487,8 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.Navigation("Answers");
 
                     b.Navigation("Comments");
+
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

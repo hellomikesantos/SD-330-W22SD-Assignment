@@ -9,8 +9,7 @@
     @foreach(CommentToQuestion comment in Model.Comments)
     {
         <div class="comment-box">
-            <p>@comment.Body</p>
-            <p>by @comment.User.UserName</p>
+            <p>@comment.Body by @comment.User.UserName</p>
         </div>
     }
 }
@@ -18,18 +17,35 @@
 
 <div>
     <form asp-action="AddComment" asp-route-questionId="@Model.Id">
-        <label for="name">Comment:</label>
+        <label for="comment" style="font:bold">Comment to this Question:</label>
+        <br />
         <input placeholder="Add your comments here..." name="comment" />
         <button>Submit</button>
     </form>
 </div>
+<br />
+<hr />
+<h3>Responses:</h3>
 
 @foreach(Answer answer in Model.Answers)
 {
     <div>
         <h4>@answer.User.UserName</h4>
         <p>@answer.Body</p>
+        <form asp-action="AddComment" asp-route-answerId="@answer.Id">
+            <label for="comment">Your comment</label>
+            <input placeholder="Comment to this answer" name="comment" type="text">
+            <button type="submit">Submit</button>
+        </form>
     </div>
+    
+    @*@foreach(CommentToAnswer comment in answer.Comments)
+    {
+        <div>
+            <h6>@answer.User.UserName</h6>
+            <p>@comment.Body</p>
+        </div>
+    }*@
 }
 <h5>Respond here:</h5>
 <div>

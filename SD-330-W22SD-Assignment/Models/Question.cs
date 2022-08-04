@@ -13,9 +13,9 @@ namespace SD_330_W22SD_Assignment.Models
         public bool IsBeingAnswered { get; set; }
         //public int TagId { get; set; }
         //public Tag Tag { get; set; }
-        //public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
+        public ICollection<Tag> Tags { get; set; } = new HashSet<Tag>();
 
-        //public List<Question_Tag> QuestionTags { get; set; }
+        //public List<QuestionTag> QuestionTags { get; set; }
 
         public ICollection<CommentToQuestion> Comments { get; set; } = new HashSet<CommentToQuestion>(); 
         public ICollection<Answer> Answers { get; set; } = new HashSet<Answer>();

@@ -62,13 +62,26 @@ namespace SD_330_W22SD_Assignment.Controllers
                     _context.SaveChanges();
                     if(tagsString != null)
                     {
-                        List<string> tagsList = tagsString.Split(',').ToList();
-                        foreach(string tagString in tagsList)
+                        string[] tagsList = tagsString.Split(',');
+                        foreach(string tagString in tagsString.Split(','))
                         {
-                            Tag tag = new Tag();
-                            tag.Name = tagString;
-                            //q.Tags.Add(tag);
-                            tag.Questions.Add(q);
+                            //Question_Tag qTag = new Question_Tag();
+                            //qTag.Tag.Name = tagString;
+                            //qTag.TagId = qTag.Tag.Id;
+                            //qTag.Tag.QuestionTags.Add(qTag);
+
+                            //qTag.Question = q;
+                            //qTag.QuestionId = q.Id;
+                            //qTag.Question.QuestionTags.Add(qTag);
+                            //_context.QuestionTag.Add(qTag);
+                            //_context.SaveChanges();
+
+                            //Tag tagDb = await _context.Tag.FirstAsync(t => t.Id == tag.Id);
+                            //tagDb.Name = tagString;
+                            //q.Tags.Add(tagDb);
+                            //tagDb.Questions.Add(q);
+                            //_context.SaveChanges();
+                            
                         }
                     }
                 }
@@ -87,8 +100,9 @@ namespace SD_330_W22SD_Assignment.Controllers
             //List<Question> questionsList = _context.Question.ToList();
 
             Question question = await _context.Question
-                .Include(q => q.Comments).ThenInclude(c => c.User)
-                .Include(q => q.Answers).ThenInclude(a => a.User).FirstAsync(q => q.Id == questionId);
+                .Include(q => q.Comments).ThenInclude(cc => cc.User)
+                .Include(q => q.Answers).ThenInclude(a => a.Comments)
+                .FirstAsync(q => q.Id == questionId);
             
             return View(question);
         }
@@ -131,8 +145,9 @@ namespace SD_330_W22SD_Assignment.Controllers
             return RedirectToAction("AnswerQuestion", new { questionId });
         }
 
-        public async Task<IActionResult> AddComment(int? questionId, string? comment)
+        public async Task<IActionResult> AddComment(int? questionId, int? answerId, string? comment)
         {
+            // Comment to a question
             if(questionId != null && comment != null)
             {
                 try
@@ -149,6 +164,8 @@ namespace SD_330_W22SD_Assignment.Controllers
                     ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
                     submittedComment.User = user;
                     submittedComment.UserId = user.Id;
+                    submittedComment.Question = commentedQuestion;
+                    submittedComment.QuestionId = commentedQuestion.Id;                    
 
                     commentedQuestion.Comments.Add(submittedComment);
                     
@@ -161,31 +178,55 @@ namespace SD_330_W22SD_Assignment.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
+
+            // Comment to an Answer
+            if(answerId != null && comment != null)
+            {
+                try
+                {
+                    Answer commentedAnswer = await _context.Answer
+                        .Include(a => a.User).Include(a => a.Comments).ThenInclude(c => c.User)
+                        .FirstAsync(a => a.Id == answerId);
+                    CommentToAnswer submittedComment = new CommentToAnswer();
+                    submittedComment.Body = comment;
+
+                    string userName = User.Identity.Name;
+                    ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
+                    submittedComment.User = user;
+                    submittedComment.UserId = user.Id;
+                    submittedComment.Answer = commentedAnswer;
+                    submittedComment.AnswerId = commentedAnswer.Id;
+
+                    commentedAnswer.Comments.Add(submittedComment);
+
+                    _context.SaveChanges();
+
+                    return RedirectToAction("AnswerQuestion", new { questionId });
+
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
             return RedirectToAction("AnswerQuestion", new { questionId });
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> Index(int? questionId)
-        //{
-        //    if(questionId != null)
-        //    {
-        //        try
-        //        {
-        //            Question selected = _context.Question.First(q => q.Id == questionId);
-        //            string userName = User.Identity.Name;
 
-        //            ApplicationUser user = _context.Users.First(q => q.UserName == userName);
-        //            user.Questions.Add(selected);
-        //            selected.User = user;
-        //            selected.User.Id = user.Id;
-        //        }
-        //        catch
-        //        {
-        //            return RedirectToAction("Error", "Home");
-        //        }
-        //    }
-        //    return View("Index");
-        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // GET: Questions/Details/5
         public async Task<IActionResult> Details(int? id)

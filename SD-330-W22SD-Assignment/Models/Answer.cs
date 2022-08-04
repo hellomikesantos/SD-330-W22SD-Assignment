@@ -8,8 +8,6 @@
         public string Body { get; set; }
         public ApplicationUser User { get; set; }
         public string? UserId { get; set; }
-        public Answer()
-        {
-        }
+        public ICollection<CommentToAnswer> Comments { get; set; } = new HashSet<CommentToAnswer>();
     }
 }
