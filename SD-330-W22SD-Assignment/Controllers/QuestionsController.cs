@@ -25,10 +25,46 @@ namespace SD_330_W22SD_Assignment.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Question.Include(q => q.User).
-                OrderByDescending(q => q.Id);
+            var applicationDbContext = _context.Question.Include(q => q.User)
+                .Include(q => q.Votes)
+                .Include(q => q.Answers)
+                .OrderByDescending(q => q.Id);
             
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(int? questionId, string? voteUp, string? voteDown)
+        {
+            if(questionId != null)
+            {
+                try
+                {
+                    Question question = await _context.Question.Include(q => q.Votes)
+                    .ThenInclude(v => v.User)
+                    .FirstAsync(q => q.Id == questionId);
+
+                    string userName = User.Identity.Name;
+                    ApplicationUser user = await _context.Users.FirstAsync(q => q.UserName == userName);
+
+                    Vote vote = new Vote();
+
+                    _ = voteUp == "true" ? vote.UpVote = true : false;
+                    _ = voteDown == "true" ? vote.DownVote = true : false;
+                    vote.User = user;
+                    vote.UserId = user.Id;
+
+                    question.Votes.Add(vote);
+
+                    _context.SaveChanges();
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return RedirectToAction("Index");
+            
         }
 
  

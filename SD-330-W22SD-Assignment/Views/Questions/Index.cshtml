@@ -23,6 +23,14 @@
             <p>@question.Body</p>
 
             <hr>
+            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteUp="true" method=post>
+                <button type="submit">Thumbs Up</button>
+            </form>
+            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteDown="true" method=post>
+                <button type="submit">Thumbs Down</button>
+            </form>
+            <p><a asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteUp="true" method=post>Thumbs Up</a></p>
+            <p>UpVotes: @question.Votes.Where(v => v.UpVote).Count() | DownVotes: @question.Votes.Where(v => v.DownVote).Count()</p>
             <h6><a asp-action="AnswerQuestion" asp-route-questionId="@question.Id" style="text-decoration: none">
                 Answer this question</a></h6>
             <br>

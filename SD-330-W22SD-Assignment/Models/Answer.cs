@@ -9,5 +9,6 @@
         public ApplicationUser User { get; set; }
         public string? UserId { get; set; }
         public ICollection<CommentToAnswer> Comments { get; set; } = new HashSet<CommentToAnswer>();
+        public ICollection<Vote> Votes { get; set; } = new HashSet<Vote>();
     }
 }
