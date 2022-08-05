@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SD_330_W22SD_Assignment.Data;
 using SD_330_W22SD_Assignment.Models;
+using SD_330_W22SD_Assignment.Models.ViewModels;
 
 namespace SD_330_W22SD_Assignment.Controllers
 {
@@ -34,7 +35,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(int? questionId, string? voteUp, string? voteDown)
+        public async Task<IActionResult> Index(int? questionId, string? vote)
         {
             if(questionId != null)
             {
@@ -47,14 +48,14 @@ namespace SD_330_W22SD_Assignment.Controllers
                     string userName = User.Identity.Name;
                     ApplicationUser user = await _context.Users.FirstAsync(q => q.UserName == userName);
 
-                    Vote vote = new Vote();
+                    Vote newVote = new Vote();
 
-                    _ = voteUp == "true" ? vote.UpVote = true : false;
-                    _ = voteDown == "true" ? vote.DownVote = true : false;
-                    vote.User = user;
-                    vote.UserId = user.Id;
+                    _ = vote == "up" ? newVote.UpVote = true : false;
+                    _ = vote == "down" ? newVote.DownVote = true : false;
+                    newVote.User = user;
+                    newVote.UserId = user.Id;
 
-                    question.Votes.Add(vote);
+                    question.Votes.Add(newVote);
 
                     _context.SaveChanges();
                 }
@@ -135,7 +136,7 @@ namespace SD_330_W22SD_Assignment.Controllers
 
             Question question = await _context.Question
                 .Include(q => q.Comments).ThenInclude(c => c.User)
-                .Include(q => q.Answers).ThenInclude(a => a.Comments)
+                .Include(q => q.Answers).ThenInclude(a => a.AnswerAndVote).ThenInclude(av => av.Vote)
                 .FirstAsync(q => q.Id == questionId);
             
             return View(question);
@@ -253,7 +254,39 @@ namespace SD_330_W22SD_Assignment.Controllers
             return RedirectToAction("AnswerQuestion", new { questionId });
         }
 
+        public async Task<IActionResult> VoteAnswer(int? answerId, string? vote, int questionId)
+        {
+            if(answerId != null && vote != null)
+            {
+                try
+                {
+                    Answer answer = await _context.Answer
+                        .Include(a => a.AnswerAndVote)
+                        .ThenInclude(av => av.Vote)
+                        .ThenInclude(v => v.User)
+                        .FirstAsync(a => a.Id == answerId);
 
+                    AnswerAndVote av = new AnswerAndVote();
+                    Vote newVote = new Vote();
+                    _ = vote == "up" ? newVote.UpVote = true : false;
+                    _ = vote == "down" ? newVote.DownVote = true : false;
+                    
+                    av.Answer = answer;
+                    av.AnswerId = answer.Id;
+                    av.Vote = newVote;
+                    av.VoteId = newVote.Id;
+                    
+                    answer.AnswerAndVote.Add(av);
+
+                    _context.SaveChanges();
+                }
+                catch
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return RedirectToAction("AnswerQuestion", new { questionId });
+        }
 
 
 

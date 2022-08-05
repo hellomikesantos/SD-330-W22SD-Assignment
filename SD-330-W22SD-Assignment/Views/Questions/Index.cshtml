@@ -23,10 +23,10 @@
             <p>@question.Body</p>
 
             <hr>
-            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteUp="true" method=post>
+            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-vote="up" method=post>
                 <button type="submit">Thumbs Up</button>
             </form>
-            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteDown="true" method=post>
+            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-vote="down" method=post>
                 <button type="submit">Thumbs Down</button>
             </form>
             <p><a asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteUp="true" method=post>Thumbs Up</a></p>

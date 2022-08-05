@@ -33,6 +33,15 @@
     <div>
         <h4>@answer.User.UserName</h4>
         <p>@answer.Body</p>
+        <form asp-action="VoteAnswer" asp-route-answerId="@answer.Id" asp-route-vote="up" asp-route-questionId="@Model.Id" method=post>
+            <button type="submit">Thumbs Up</button>
+        </form>
+        <form asp-action="VoteAnswer" asp-route-answerId="@answer.Id" asp-route-vote="down" asp-route-questionid="@Model.Id" method=post>
+            <button type="submit">Thumbs Down</button>
+        </form>
+
+        <p>UpVotes: @answer.AnswerAndVote.Where(av => av.Vote.UpVote).Count() 
+            | DownVotes: @answer.AnswerAndVote.Where(av => av.Vote.DownVote).Count()</p>
 
         @foreach(CommentToAnswer comment in answer.Comments)
         {

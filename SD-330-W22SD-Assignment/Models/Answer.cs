@@ -1,4 +1,6 @@
-﻿namespace SD_330_W22SD_Assignment.Models
+﻿using SD_330_W22SD_Assignment.Models.ViewModels;
+
+namespace SD_330_W22SD_Assignment.Models
 {
     public class Answer
     {
@@ -10,5 +12,6 @@
         public string? UserId { get; set; }
         public ICollection<CommentToAnswer> Comments { get; set; } = new HashSet<CommentToAnswer>();
         public ICollection<Vote> Votes { get; set; } = new HashSet<Vote>();
+        public ICollection<AnswerAndVote> AnswerAndVote { get; set; }
     }
 }
