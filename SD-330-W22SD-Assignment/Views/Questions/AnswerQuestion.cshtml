@@ -29,23 +29,25 @@
 
 @foreach(Answer answer in Model.Answers)
 {
+
     <div>
         <h4>@answer.User.UserName</h4>
         <p>@answer.Body</p>
-        <form asp-action="AddComment" asp-route-answerId="@answer.Id">
+
+        @foreach(CommentToAnswer comment in answer.Comments)
+        {
+            <div>
+                @*<h6>@comment.User.UserName</h6>*@
+                <p>@comment.Body</p>
+            </div>
+        }
+        <form asp-action="AddComment" asp-route-answerId="@answer.Id" asp-route-questionId="@Model.Id">
             <label for="comment">Your comment</label>
             <input placeholder="Comment to this answer" name="comment" type="text">
             <button type="submit">Submit</button>
         </form>
     </div>
     
-    @*@foreach(CommentToAnswer comment in answer.Comments)
-    {
-        <div>
-            <h6>@answer.User.UserName</h6>
-            <p>@comment.Body</p>
-        </div>
-    }*@
 }
 <h5>Respond here:</h5>
 <div>

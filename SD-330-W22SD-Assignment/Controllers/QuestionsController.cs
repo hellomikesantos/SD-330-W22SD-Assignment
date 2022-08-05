@@ -62,7 +62,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                     _context.SaveChanges();
                     if(tagsString != null)
                     {
-                        string[] tagsList = tagsString.Split(',');
                         foreach(string tagString in tagsString.Split(','))
                         {
                             //Question_Tag qTag = new Question_Tag();
@@ -81,7 +80,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                             //q.Tags.Add(tagDb);
                             //tagDb.Questions.Add(q);
                             //_context.SaveChanges();
-                            
                         }
                     }
                 }
@@ -100,7 +98,7 @@ namespace SD_330_W22SD_Assignment.Controllers
             //List<Question> questionsList = _context.Question.ToList();
 
             Question question = await _context.Question
-                .Include(q => q.Comments).ThenInclude(cc => cc.User)
+                .Include(q => q.Comments).ThenInclude(c => c.User)
                 .Include(q => q.Answers).ThenInclude(a => a.Comments)
                 .FirstAsync(q => q.Id == questionId);
             
@@ -148,7 +146,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         public async Task<IActionResult> AddComment(int? questionId, int? answerId, string? comment)
         {
             // Comment to a question
-            if(questionId != null && comment != null)
+            if(questionId != null && comment != null && answerId == null)
             {
                 try
                 {
@@ -180,13 +178,18 @@ namespace SD_330_W22SD_Assignment.Controllers
             }
 
             // Comment to an Answer
-            if(answerId != null && comment != null)
+            if(answerId != null && comment != null && questionId != null)
             {
                 try
                 {
-                    Answer commentedAnswer = await _context.Answer
-                        .Include(a => a.User).Include(a => a.Comments).ThenInclude(c => c.User)
-                        .FirstAsync(a => a.Id == answerId);
+                    Question selectedQuestion = await _context.Question.Include(q => q.Answers)
+                        .ThenInclude(a => a.Comments).ThenInclude(c => c.User)
+                        .FirstAsync(q => q.Id == questionId);
+                    //Answer commentedAnswer = await _context.Answer
+                    //    .Include(a => a.User).Include(a => a.Comments).ThenInclude(c => c.User)
+                    //    .FirstAsync(a => a.Id == answerId);
+
+                    Answer commentedAnswer = selectedQuestion.Answers.First(a => a.Id == answerId);
                     CommentToAnswer submittedComment = new CommentToAnswer();
                     submittedComment.Body = comment;
 
@@ -198,6 +201,8 @@ namespace SD_330_W22SD_Assignment.Controllers
                     submittedComment.AnswerId = commentedAnswer.Id;
 
                     commentedAnswer.Comments.Add(submittedComment);
+                    
+                    
 
                     _context.SaveChanges();
 
