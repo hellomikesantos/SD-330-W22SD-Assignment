@@ -50,14 +50,35 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     Vote newVote = new Vote();
 
-                    _ = vote == "up" ? newVote.UpVote = true : false;
-                    _ = vote == "down" ? newVote.DownVote = true : false;
-                    newVote.User = user;
-                    newVote.UserId = user.Id;
+                    if (question.User.Id == user.Id)
+                    {
+                        switch (vote)
+                        {
+                            case "up":
+                                if (question.Votes.Any(v => v.UserId == user.Id && v.UpVote))
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                                break;
+                            case "down":
+                                if (question.Votes.Any(v => v.UserId == user.Id && v.DownVote))
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                            break;
+                        };
+                    }
+                    else
+                    {
+                        _ = vote == "up" ? newVote.UpVote = true : false;
+                        _ = vote == "down" ? newVote.DownVote = true : false;
+                        newVote.User = user;
+                        newVote.UserId = user.Id;
 
-                    question.Votes.Add(newVote);
+                        question.Votes.Add(newVote);
 
-                    _context.SaveChanges();
+                        _context.SaveChanges();
+                    }
                 }
                 catch
                 {
@@ -268,17 +289,44 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     AnswerAndVote av = new AnswerAndVote();
                     Vote newVote = new Vote();
-                    _ = vote == "up" ? newVote.UpVote = true : false;
-                    _ = vote == "down" ? newVote.DownVote = true : false;
-                    
-                    av.Answer = answer;
-                    av.AnswerId = answer.Id;
-                    av.Vote = newVote;
-                    av.VoteId = newVote.Id;
-                    
-                    answer.AnswerAndVote.Add(av);
+                    string userName = User.Identity.Name;
+                    ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
 
-                    _context.SaveChanges();
+                    if(answer.User.Id == user.Id)
+                    {
+                        switch (vote)
+                        {
+                            case "up":
+                                if (answer.AnswerAndVote.Any(av => av.Vote.UserId == user.Id && av.Vote.UpVote))
+                                {
+                                    return RedirectToAction("AnswerQuestion", new { questionId });
+                                }
+                                break;
+                            case "down":
+                                if (answer.AnswerAndVote.Any(av => av.Vote.UserId == user.Id && av.Vote.DownVote))
+                                {
+                                    return RedirectToAction("AnswerQuestion", new { questionId });
+                                }
+                                break;
+                                //default:
+                                //    return RedirectToAction("AnswerQuestion", new { questionId });
+                        };
+                    }
+                    else
+                    {
+                        _ = vote == "up" ? newVote.UpVote = true : false;
+                        _ = vote == "down" ? newVote.DownVote = true : false;
+
+                        av.Answer = answer;
+                        av.AnswerId = answer.Id;
+                        av.Vote = newVote;
+                        av.VoteId = newVote.Id;
+
+                        answer.AnswerAndVote.Add(av);
+
+                        _context.SaveChanges();
+                    }
+                    
                 }
                 catch
                 {
