@@ -28,6 +28,8 @@ namespace SD_330_W22SD_Assignment.Controllers
         {
             var applicationDbContext = _context.Question.Include(q => q.User)
                 .Include(q => q.Votes)
+                .Include(q => q.User)
+                    .ThenInclude(u => u.Reputation)
                 .Include(q => q.Answers)
                 .OrderByDescending(q => q.Id);
             
@@ -41,12 +43,18 @@ namespace SD_330_W22SD_Assignment.Controllers
             {
                 try
                 {
-                    Question question = await _context.Question.Include(q => q.Votes)
-                    .ThenInclude(v => v.User)
-                    .FirstAsync(q => q.Id == questionId);
+                    Question question = await _context.Question
+                        .Include(q => q.Votes)
+                            .ThenInclude(v => v.User)
+                        .Include(q => q.User)
+                            .ThenInclude(u => u.Reputation)
+                        .FirstAsync(q => q.Id == questionId);
 
                     string userName = User.Identity.Name;
-                    ApplicationUser user = await _context.Users.FirstAsync(q => q.UserName == userName);
+                    ApplicationUser user = await _context.Users
+                        .Include(u => u.Reputation)
+                        .Include(u => u.Votes)
+                        .FirstAsync(q => q.UserName == userName);
 
                     Vote newVote = new Vote();
 
@@ -70,13 +78,51 @@ namespace SD_330_W22SD_Assignment.Controllers
                     }
                     else
                     {
-                        _ = vote == "up" ? newVote.UpVote = true : false;
-                        _ = vote == "down" ? newVote.DownVote = true : false;
+                        switch (vote)
+                        {
+                            case "up":
+                                if (question.Votes.Any(v => v.User.Id == user.Id && v.UpVote))
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                                newVote.UpVote = true;
+                                foreach(Vote v in question.Votes)
+                                {
+                                    if (v.User.Id == user.Id && v.DownVote)
+                                    {
+                                        question.Votes.Remove(v);
+                                        question.User.Reputation.Score += 5;
+                                    }
+                                }
+                                
+                                _context.SaveChanges();
+                                break;
+                            case "down":
+                                if (question.Votes.Any(v => v.User.Id == user.Id && v.DownVote))
+                                {
+                                    return RedirectToAction("Index");
+                                }
+                                newVote.DownVote = true;
+                                foreach (Vote v in question.Votes)
+                                {
+                                    if (v.User.Id == user.Id && v.UpVote)
+                                    {
+                                        question.Votes.Remove(v);
+                                        question.User.Reputation.Score -= 5;
+                                    }
+                                }
+                                
+                                _context.SaveChanges();
+                                break;
+                        };
+                        //_ = vote == "up" ? newVote.UpVote = true : false;
+                        //_ = vote == "down" ? newVote.DownVote = true : false;
                         newVote.User = user;
                         newVote.UserId = user.Id;
 
                         question.Votes.Add(newVote);
-
+                        user.Votes.Add(newVote);
+                        
                         _context.SaveChanges();
                     }
                 }
