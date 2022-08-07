@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -251,21 +252,39 @@ namespace SD_330_W22SD_Assignment.Controllers
         [HttpPost]
         public async Task<IActionResult> MyPost(int? answerId, int? questionId)
         {
-            Answer answer = await _context.Answer
-                .Include(a => a.CorrectAnswer)
-                .FirstAsync(a => a.Id == answerId);
+            if(answerId != null && questionId != null)
+            {
+                try
+                {
+                    Answer answer = await _context.Answer
+                        .Include(a => a.CorrectAnswer)
+                        .FirstAsync(a => a.Id == answerId);
 
-            Question question = await _context.Question
-                .Include(q => q.CorrectAnswer)
-                .FirstAsync(q => q.Id == questionId);
+                    Question question = await _context.Question
+                        .Include(q => q.CorrectAnswer)
+                        .FirstAsync(q => q.Id == questionId);
 
-            question.CorrectAnswer.Answer = answer;
-            question.CorrectAnswer.Answer.Id = answer.Id;
-            //answer.CorrectAnswer = question.CorrectAnswer;
-            //answer.CorrectAnswer.AnswerId = question.CorrectAnswer.Answer.Id;
+                    string userName = User.Identity.Name;
+                    ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
 
+                    if(user.Id != question.User.Id)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        question.CorrectAnswer.Answer = answer;
+                        question.CorrectAnswer.Answer.Id = answer.Id;
 
-            _context.SaveChanges();
+                        _context.SaveChanges();
+                    }   
+                }
+                catch(Exception ex)
+                {
+                    return RedirectToAction("Error", new { ex });
+                }
+            }
+            
 
             return RedirectToAction("MyPost", new { questionId });
         }
@@ -296,13 +315,13 @@ namespace SD_330_W22SD_Assignment.Controllers
                     user.Answers.Add(submittedAnswer);
 
                     _context.Answer.Add(submittedAnswer);
-                    ViewBag.Message = "Answer submitted";
+                    
 
                     _context.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Error", new { ex });
                 }
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
@@ -444,7 +463,12 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error(string message)
+        {
 
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, ExceptionMessage = message });
+        }
 
 
 
