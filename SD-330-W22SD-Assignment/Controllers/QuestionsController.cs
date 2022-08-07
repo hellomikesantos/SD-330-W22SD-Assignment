@@ -218,7 +218,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                     //.ThenInclude(a => a.AnswerAndVote)
                     //.ThenInclude(av => av.Vote)
                 .FirstAsync(q => q.Id == questionId);
-            
             return View(question);
         }
 

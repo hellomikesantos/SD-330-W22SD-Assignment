@@ -1,5 +1,7 @@
 ﻿
 
+using SD_330_W22SD_Assignment.Models.ViewModels;
+
 namespace SD_330_W22SD_Assignment.Models
 {
     public class Question

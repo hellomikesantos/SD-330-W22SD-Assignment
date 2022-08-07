@@ -171,7 +171,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuestionTag");
+                    b.ToTable("QuestionTag", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Answer", b =>
@@ -198,7 +198,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Answer");
+                    b.ToTable("Answer", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.ApplicationUser", b =>
@@ -290,7 +290,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentToAnswer");
+                    b.ToTable("CommentToAnswer", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.CommentToQuestion", b =>
@@ -317,7 +317,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CommentToQuestion");
+                    b.ToTable("CommentToQuestion", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.CorrectAnswer", b =>
@@ -334,7 +334,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .IsUnique()
                         .HasFilter("[AnswerId] IS NOT NULL");
 
-                    b.ToTable("CorrectAnswer");
+                    b.ToTable("CorrectAnswer", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Question", b =>
@@ -366,7 +366,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Question");
+                    b.ToTable("Question", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Reputation", b =>
@@ -389,7 +389,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Reputation");
+                    b.ToTable("Reputation", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Tag", b =>
@@ -406,7 +406,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tag", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Vehicle", b =>
@@ -435,7 +435,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Vehicle");
+                    b.ToTable("Vehicle", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.ViewModels.AnswerAndVote", b =>
@@ -458,7 +458,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("VoteId");
 
-                    b.ToTable("AnswerAndVote");
+                    b.ToTable("AnswerAndVote", (string)null);
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Vote", b =>
@@ -492,7 +492,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Vote");
+                    b.ToTable("Vote", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
