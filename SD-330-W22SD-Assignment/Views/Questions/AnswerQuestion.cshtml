@@ -40,8 +40,8 @@
             <button type="submit">Thumbs Down</button>
         </form>
 
-        <p>UpVotes: @answer.AnswerAndVote.Where(av => av.Vote.UpVote).Count() 
-            | DownVotes: @answer.AnswerAndVote.Where(av => av.Vote.DownVote).Count()</p>
+        @*<p>UpVotes: @answer.AnswerAndVote.Where(av => av.Vote.UpVote).Count() 
+            | DownVotes: @answer.AnswerAndVote.Where(av => av.Vote.DownVote).Count()</p>*@
 
         @foreach(CommentToAnswer comment in answer.Comments)
         {

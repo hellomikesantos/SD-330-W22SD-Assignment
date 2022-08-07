@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SD_330_W22SD_Assignment.Data;
 
@@ -11,9 +12,10 @@ using SD_330_W22SD_Assignment.Data;
 namespace SD_330_W22SD_Assignment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220806162827_AddCorrectAnswer")]
+    partial class AddCorrectAnswer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,17 +324,26 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.CorrectAnswer", b =>
                 {
-                    b.Property<int>("QuestionId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("AnswerId")
                         .HasColumnType("int");
 
-                    b.HasKey("QuestionId");
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("AnswerId")
                         .IsUnique()
                         .HasFilter("[AnswerId] IS NOT NULL");
+
+                    b.HasIndex("QuestionId")
+                        .IsUnique();
 
                     b.ToTable("CorrectAnswer");
                 });

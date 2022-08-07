@@ -1,0 +1,16 @@
+﻿@model Question
+
+@foreach(Answer answer in Model.Answers)
+{
+    <div>
+        
+        @if(Model.CorrectAnswer.AnswerId == answer.Id)
+        {
+            <h5 style="background-color:yellow">Correct Answer</h5>
+        }
+        <p>@answer.Body by @answer.User</p>
+        <form asp-action="MyPost" asp-route-answerId="@answer.Id" asp-route-questionId="@Model.Id" method="post">
+            <button type="submit">Mark as Correct</button>
+        </form>
+    </div>
+}

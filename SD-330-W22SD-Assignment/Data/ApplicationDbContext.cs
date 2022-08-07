@@ -9,24 +9,24 @@ namespace SD_330_W22SD_Assignment.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {
+        {  
         }
 
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //protected override void OnModelCreating(ModelBuilder modelBuilder) 
         //{
 
-        //    modelBuilder.Entity<QuestionTag>()
-        //        .HasKey(q => new { q.QuestionId, q.TagId });
+            //modelBuilder.Entity<QuestionTag>()
+            //    .HasKey(q => new { q.QuestionId, q.TagId });
 
-        //    modelBuilder.Entity<QuestionTag>()
-        //        .HasOne(q => q.Question)
-        //        .WithMany(qt => qt.QuestionTags)
-        //        .HasForeignKey(qt => qt.QuestionId);
+            //modelBuilder.Entity<QuestionTag>()
+            //    .HasOne(q => q.Question)
+            //    .WithMany(qt => qt.QuestionTags)
+            //    .HasForeignKey(qt => qt.QuestionId);
 
-        //    modelBuilder.Entity<QuestionTag>()
-        //        .HasOne(t => t.Tag)
-        //        .WithMany(qt => qt.QuestionTags)
-        //        .HasForeignKey(qt => qt.TagId);
+            //modelBuilder.Entity<QuestionTag>()
+            //    .HasOne(t => t.Tag)
+            //    .WithMany(qt => qt.QuestionTags)
+            //    .HasForeignKey(qt => qt.TagId);
         //}
 
         public DbSet<SD_330_W22SD_Assignment.Models.Vehicle>? Vehicle { get; set; }

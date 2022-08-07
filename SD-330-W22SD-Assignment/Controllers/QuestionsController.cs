@@ -52,7 +52,6 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     string userName = User.Identity.Name;
                     ApplicationUser user = await _context.Users
-                        .Include(u => u.Reputation)
                         .Include(u => u.Votes)
                         .FirstAsync(q => q.UserName == userName);
 
@@ -94,7 +93,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                                         question.User.Reputation.Score += 5;
                                     }
                                 }
-                                
                                 _context.SaveChanges();
                                 break;
                             case "down":
@@ -111,12 +109,23 @@ namespace SD_330_W22SD_Assignment.Controllers
                                         question.User.Reputation.Score -= 5;
                                     }
                                 }
-                                
                                 _context.SaveChanges();
                                 break;
                         };
-                        //_ = vote == "up" ? newVote.UpVote = true : false;
-                        //_ = vote == "down" ? newVote.DownVote = true : false;
+                        //_ = vote == "up" ? question.User.Reputation.Score += 5 : 0;
+                        //_ = vote == "down" ? question.User.Reputation.Score -= 5 : 0;
+
+                        //if (newVote.UpVote)
+                        //{
+                        //    question.User.Reputation.Score += 5;
+                        //}
+                        //if (newVote.DownVote)
+                        //{
+                        //    question.User.Reputation.Score = 5;
+                        //}
+
+                        question.User.Reputation.Score = question.Votes.Where(v => v.UpVote).Count() - question.Votes.Where(v => v.DownVote).Count();
+
                         newVote.User = user;
                         newVote.UserId = user.Id;
 
@@ -203,10 +212,62 @@ namespace SD_330_W22SD_Assignment.Controllers
 
             Question question = await _context.Question
                 .Include(q => q.Comments).ThenInclude(c => c.User)
-                .Include(q => q.Answers).ThenInclude(a => a.AnswerAndVote).ThenInclude(av => av.Vote)
+                .Include(q => q.Answers)
+                    .ThenInclude(a => a.User)
+                    //.ThenInclude(a => a.AnswerAndVote)
+                    //.ThenInclude(av => av.Vote)
                 .FirstAsync(q => q.Id == questionId);
             
             return View(question);
+        }
+
+        public async Task<IActionResult> MyPosts()
+        {
+            string userName = User.Identity.Name;
+            ApplicationUser user = await _context.Users
+                .Include(u => u.Questions)
+                    .ThenInclude(q => q.Answers)
+                    .ThenInclude(a => a.User)
+                .Include(u => u.Answers)
+                .FirstAsync(u => u.UserName == userName);
+            return View(user);
+        }
+
+        
+        public async Task<IActionResult> MyPost(int? questionId)
+        {
+            Question question = await _context.Question
+                .Include(q => q.Answers)
+                    .ThenInclude(a => a.User)
+                    .ThenInclude(a => a.CommentsToAnswer)
+                .Include(q => q.Comments)
+                .Include(q => q.CorrectAnswer)
+                .FirstAsync(q => q.Id == questionId);
+            
+
+            return View(question);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MyPost(int? answerId, int? questionId)
+        {
+            Answer answer = await _context.Answer
+                .Include(a => a.CorrectAnswer)
+                .FirstAsync(a => a.Id == answerId);
+
+            Question question = await _context.Question
+                .Include(q => q.CorrectAnswer)
+                .FirstAsync(q => q.Id == questionId);
+
+            question.CorrectAnswer.Answer = answer;
+            question.CorrectAnswer.Answer.Id = answer.Id;
+            //answer.CorrectAnswer = question.CorrectAnswer;
+            //answer.CorrectAnswer.AnswerId = question.CorrectAnswer.Answer.Id;
+
+
+            _context.SaveChanges();
+
+            return RedirectToAction("MyPost", new { questionId });
         }
 
         [HttpPost]

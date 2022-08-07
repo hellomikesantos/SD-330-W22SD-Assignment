@@ -20,6 +20,8 @@ namespace SD_330_W22SD_Assignment.Models
         public ICollection<CommentToQuestion> Comments { get; set; } = new HashSet<CommentToQuestion>(); 
         public ICollection<Answer> Answers { get; set; } = new HashSet<Answer>();
         public ICollection<Vote> Votes { get; set; } = new HashSet<Vote>();
+        public CorrectAnswer CorrectAnswer { get; set; } = new CorrectAnswer();
+
         public Question()   
         {
             CreatedDate = DateTime.Today;

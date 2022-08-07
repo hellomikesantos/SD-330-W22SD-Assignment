@@ -1,0 +1,11 @@
+﻿@model ApplicationUser
+
+<h3>@Model.UserName's posted questions:</h3>
+
+@foreach(Question question in Model.Questions)
+{
+    <div>
+        <h4><a asp-action="MyPost" asp-route-questionId="@question.Id">question.Title</a></h4>
+        <p>@question.Body</p>
+    </div>
+}
