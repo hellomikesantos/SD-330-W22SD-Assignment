@@ -76,7 +76,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                             break;
                         };
                     }
-                    else
+                    else if(question.User.Id != user.Id)
                     {
                         switch (vote)
                         {
@@ -91,10 +91,9 @@ namespace SD_330_W22SD_Assignment.Controllers
                                     if (v.User.Id == user.Id && v.DownVote)
                                     {
                                         question.Votes.Remove(v);
-                                        question.User.Reputation.Score += 5;
                                     }
                                 }
-                                _context.SaveChanges();
+
                                 break;
                             case "down":
                                 if (question.Votes.Any(v => v.User.Id == user.Id && v.DownVote))
@@ -107,32 +106,23 @@ namespace SD_330_W22SD_Assignment.Controllers
                                     if (v.User.Id == user.Id && v.UpVote)
                                     {
                                         question.Votes.Remove(v);
-                                        question.User.Reputation.Score -= 5;
                                     }
                                 }
-                                _context.SaveChanges();
+
                                 break;
                         };
-                        //_ = vote == "up" ? question.User.Reputation.Score += 5 : 0;
-                        //_ = vote == "down" ? question.User.Reputation.Score -= 5 : 0;
 
-                        //if (newVote.UpVote)
-                        //{
-                        //    question.User.Reputation.Score += 5;
-                        //}
-                        //if (newVote.DownVote)
-                        //{
-                        //    question.User.Reputation.Score = 5;
-                        //}
-
-                        question.User.Reputation.Score = question.Votes.Where(v => v.UpVote).Count() - question.Votes.Where(v => v.DownVote).Count();
+                        
 
                         newVote.User = user;
                         newVote.UserId = user.Id;
 
                         question.Votes.Add(newVote);
                         user.Votes.Add(newVote);
-                        
+
+                        question.User.Reputation.Score = 5 * (question.Votes
+                            .Where(v => v.UpVote).Count() - question.Votes
+                            .Where(v => v.DownVote).Count());
                         _context.SaveChanges();
                     }
                 }

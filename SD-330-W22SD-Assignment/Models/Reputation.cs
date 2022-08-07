@@ -3,12 +3,9 @@
     public class Reputation
     {
         public int Id { get; set; }
-        public int Score { get; set; }
+        public int Score { get; set; } = 0;
         public string? UserId { get; set; }
         public ApplicationUser User { get; set; }
-        public Reputation()
-        {
-            Score = 0;
-        }
+
     }
 }
