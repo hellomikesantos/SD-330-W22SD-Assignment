@@ -1,0 +1,24 @@
+﻿@model IEnumerable<SD_330_W22SD_Assignment.Models.Question>
+
+
+<h1>Admin Page</h1>
+
+    @foreach(Question question in Model)
+    {
+        <div>
+            <h5><a asp-action="MyPost" asp-route-questionId="@question.Id">Title: @question.Title</a></h5>
+            <p>Posted by: @question.User.UserName | Reputation: @question.User.Reputation.Score</p>
+            <p>Date Posted: @question.CreatedDate</p>
+            <p>Answers: @question.Answers.Count</p>
+            <hr>
+            <p>@question.Body</p>
+
+
+            <hr>
+            <form asp-action="AdminPage" asp-route-questionId="@question.Id" method=post>
+                <button type="submit">Delete</button>
+            </form>
+            <br>
+            <hr>
+        </div>
+     }

@@ -83,6 +83,32 @@ namespace SD_330_W22SD_Assignment.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdminPage()
+        {
+            var applicationDbContext = _context.Question.Include(q => q.User)
+                .Include(q => q.Votes)
+                .Include(q => q.User)
+                    .ThenInclude(u => u.Reputation)
+                .Include(q => q.Answers)
+                .OrderByDescending(q => q.Id);
+
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        //[Authorize("Admin")]
+        [HttpPost]
+        public async Task<IActionResult> AdminPage(int questionId)
+        {
+            // delete questions from admin page
+            Question question = await _context.Question
+                       .FirstAsync(q => q.Id == questionId);
+
+            _context.Question.Remove(question);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("AdminPage");
+        }
+
         // GET: Questions
         [Authorize]
         public async Task<IActionResult> Index()

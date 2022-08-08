@@ -340,9 +340,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.Property<bool>("IsBeingAnswered")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -351,8 +348,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TagId");
 
                     b.HasIndex("UserId");
 
@@ -394,7 +389,7 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("QuestionId")
+                    b.Property<int?>("QuestionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -611,10 +606,6 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Question", b =>
                 {
-                    b.HasOne("SD_330_W22SD_Assignment.Models.Tag", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("TagId");
-
                     b.HasOne("SD_330_W22SD_Assignment.Models.ApplicationUser", "User")
                         .WithMany("Questions")
                         .HasForeignKey("UserId");
@@ -633,13 +624,9 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Tag", b =>
                 {
-                    b.HasOne("SD_330_W22SD_Assignment.Models.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
+                    b.HasOne("SD_330_W22SD_Assignment.Models.Question", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("QuestionId");
                 });
 
             modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Vehicle", b =>
@@ -724,12 +711,9 @@ namespace SD_330_W22SD_Assignment.Data.Migrations
                     b.Navigation("CorrectAnswer")
                         .IsRequired();
 
-                    b.Navigation("Votes");
-                });
+                    b.Navigation("Tags");
 
-            modelBuilder.Entity("SD_330_W22SD_Assignment.Models.Tag", b =>
-                {
-                    b.Navigation("Questions");
+                    b.Navigation("Votes");
                 });
 #pragma warning restore 612, 618
         }
