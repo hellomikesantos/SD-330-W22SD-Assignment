@@ -1,0 +1,10 @@
+﻿@ViewBag.Message
+
+<h3>Add a new role</h3>
+<form method="post" asp-action="AddRole">
+    <input type="text" placeholder="New Role Name" name="roleName" />
+    <button type="submit">Add Role</button>
+</form>
+
+<a asp-action="AddUserToRole">Add a User to a Role</a>
+

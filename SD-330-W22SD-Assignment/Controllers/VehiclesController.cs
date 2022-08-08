@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SD_330_W22SD_Assignment.Data;
 using SD_330_W22SD_Assignment.Models;
-using SD_330_W22SD_Assignment.Models.ViewModels;
 
 namespace SD_330_W22SD_Assignment.Controllers
 {

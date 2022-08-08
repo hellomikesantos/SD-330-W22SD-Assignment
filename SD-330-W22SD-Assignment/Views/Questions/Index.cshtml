@@ -6,6 +6,7 @@
 }
 
 <h1>Stack Overflow</h1>
+<p><a asp-action="AddRole">Admin Access</a></p>
 <form>
     <button asp-action="PostQuestion">Post a question</button>
 </form>
@@ -34,16 +35,7 @@
             <h6><a asp-action="AnswerQuestion" asp-route-questionId="@question.Id" style="text-decoration: none">
                 Answer this question</a></h6>
             <br>
-            @if(question.Tags.Count > 0)
-            {
-               @* @foreach(Question_Tag qTag in question.QuestionTags)
-                {
-                    <div style="display:inline">
-                        @qTag.Tag.Name;
-                    </div>
-                
-                }*@
-            }
+
             
 
             <hr>

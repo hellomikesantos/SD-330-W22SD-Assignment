@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace SD_330_W22SD_Assignment.Models.ViewModels
+namespace SD_330_W22SD_Assignment.Models
 {
     public class UserAndRole
     {
@@ -14,12 +14,12 @@ namespace SD_330_W22SD_Assignment.Models.ViewModels
             Users = new HashSet<SelectListItem>();
             Roles = new HashSet<SelectListItem>();
 
-            foreach(ApplicationUser user in users)
+            foreach (ApplicationUser user in users)
             {
                 Users.Add(new SelectListItem(user.UserName, user.Id));
             }
 
-            foreach(IdentityRole role in identityRoles)
+            foreach (IdentityRole role in identityRoles)
             {
                 Roles.Add(new SelectListItem(role.Name, role.Id));
             }

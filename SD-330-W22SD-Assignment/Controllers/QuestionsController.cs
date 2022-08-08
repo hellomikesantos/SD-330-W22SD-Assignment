@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,71 @@ namespace SD_330_W22SD_Assignment.Controllers
     public class QuestionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public QuestionsController(ApplicationDbContext context)
+        private UserManager<ApplicationUser> _userManager { get; set; }
+        private RoleManager<IdentityRole> _roleManager { get; set; }
+        public QuestionsController(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
+        public IActionResult AddRole()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRole(string? roleName)
+        {
+            if (roleName != null)
+            {
+                try
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(roleName));
+                    await _context.SaveChangesAsync();
+
+                    ViewBag.Message = $"Added new role '{roleName}'";
+                    return View();
+                }
+                catch(Exception ex)
+                {
+                    return RedirectToAction("Error");
+                }
+            }
+            return RedirectToAction("Error");
+        }
+
+        public IActionResult AddUserToRole()
+        {
+            UserAndRole vm = new UserAndRole(
+            _context.Users.ToList(),
+            _context.Roles.ToList());
+            return View(vm);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddUserToRole(string userId, string roleId)
+        {
+
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            IdentityRole role = await _roleManager.FindByIdAsync(roleId);
+
+            bool isInRole = await _userManager.IsInRoleAsync(user, role.Name);
+
+            if (!isInRole)
+            {
+                await _userManager.AddToRoleAsync(user, role.Name);
+                await _context.SaveChangesAsync();
+            }
+            UserAndRole vm = new UserAndRole(
+            _context.Users.ToList(),
+            _context.Roles.ToList());
+
+            vm.Message = $"Added {user.UserName} to role {role.Name}";
+            return View(vm);
+        }
 
         // GET: Questions
         [Authorize]
