@@ -14,6 +14,7 @@ using SD_330_W22SD_Assignment.Models.ViewModels;
 
 namespace SD_330_W22SD_Assignment.Controllers
 {
+    [Authorize]
     public class QuestionsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -110,7 +111,8 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
         // GET: Questions
-        [Authorize]
+
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Question.Include(q => q.User)
@@ -120,6 +122,19 @@ namespace SD_330_W22SD_Assignment.Controllers
                 .Include(q => q.Answers)
                 .OrderByDescending(q => q.Id);
             
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> IndexAnonymous()
+        {
+            var applicationDbContext = _context.Question.Include(q => q.User)
+                .Include(q => q.Votes)
+                .Include(q => q.User)
+                    .ThenInclude(u => u.Reputation)
+                .Include(q => q.Answers)
+                .OrderByDescending(q => q.Id);
+
             return View(await applicationDbContext.ToListAsync());
         }
 

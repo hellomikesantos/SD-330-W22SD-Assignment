@@ -1,4 +1,6 @@
-﻿@model IEnumerable<SD_330_W22SD_Assignment.Models.Question>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<SD_330_W22SD_Assignment.Models.Question>
 
 
 
@@ -20,23 +22,22 @@
             <p>Answers: @question.Answers.Count</p>
             <hr>
             <p>@question.Body</p>
-
-            <hr>
-            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-vote="up" method=post>
-                <button type="submit">Thumbs Up</button>
-            </form>
-            <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-vote="down" method=post>
-                <button type="submit">Thumbs Down</button>
-            </form>
-            <p><a asp-action="Index" asp-route-questionId="@question.Id" asp-route-voteUp="true" method=post>Thumbs Up</a></p>
             <p>UpVotes: @question.Votes.Where(v => v.UpVote).Count() | DownVotes: @question.Votes.Where(v => v.DownVote).Count()</p>
-            <h6><a asp-action="AnswerQuestion" asp-route-questionId="@question.Id" style="text-decoration: none">
-                Answer this question</a></h6>
-            <br>
-
-            
-
             <hr>
+            @if (User.Identity.IsAuthenticated)
+                {
+                    <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-vote="up" method=post>
+                        <button type="submit">Thumbs Up</button>
+                    </form>
+                    <form asp-action="Index" asp-route-questionId="@question.Id" asp-route-vote="down" method=post>
+                        <button type="submit">Thumbs Down</button>
+                    </form>
+                    
+                    <h6><a asp-action="AnswerQuestion" asp-route-questionId="@question.Id" style="text-decoration: none">
+                        Answer this question</a></h6>
+                    <br>
+                    <hr>
+                }
         </div>
     }
 
