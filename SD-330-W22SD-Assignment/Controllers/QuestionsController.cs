@@ -113,7 +113,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         // GET: Questions
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
             var applicationDbContext = _context.Question.Include(q => q.User)
                 .Include(q => q.Votes)
@@ -121,8 +121,15 @@ namespace SD_330_W22SD_Assignment.Controllers
                     .ThenInclude(u => u.Reputation)
                 .Include(q => q.Answers)
                 .OrderByDescending(q => q.Id);
-            
-            return View(await applicationDbContext.ToListAsync());
+            int pageSize = 10;
+            int questionCount = applicationDbContext.Count();
+           
+            Pager pager = new Pager(questionCount, page, pageSize);
+            int skips = (page - 1) * pageSize;
+            var currentItems = applicationDbContext.Skip(skips).Take(pager.PageCount);
+            ViewBag.Pager = pager;
+
+            return View(await currentItems.ToListAsync());
         }
 
         [AllowAnonymous]
