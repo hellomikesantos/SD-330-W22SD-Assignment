@@ -42,14 +42,17 @@
 
         @*<p>UpVotes: @answer.AnswerAndVote.Where(av => av.Vote.UpVote).Count() 
             | DownVotes: @answer.AnswerAndVote.Where(av => av.Vote.DownVote).Count()</p>*@
-
-        @foreach(CommentToAnswer comment in answer.Comments)
+        @if(answer.Comments.Count() > 0)
         {
-            <div>
-                @*<h6>@comment.User.UserName</h6>*@
-                <p>@comment.Body</p>
-            </div>
+            @foreach(CommentToAnswer comment in answer.Comments)
+            {
+                <div>
+                    @*<h6>@comment.User.UserName</h6>*@
+                    <p>@comment.Body</p>
+                </div>
+            }
         }
+        
         <form asp-action="AddComment" asp-route-answerId="@answer.Id" asp-route-questionId="@Model.Id">
             <label for="comment">Your comment</label>
             <input placeholder="Comment to this answer" name="comment" type="text">

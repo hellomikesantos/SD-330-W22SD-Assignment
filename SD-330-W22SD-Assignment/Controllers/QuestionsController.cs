@@ -307,21 +307,19 @@ namespace SD_330_W22SD_Assignment.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> TagQuestion(int? tagId)
+        {
+            Tag tag = await _context.Tag
+                .Include(t => t.Questions)
+                    .ThenInclude(q => q.User)
+                    .ThenInclude(u => u.Reputation)
+                .FirstAsync(t => t.Id == tagId);
+            return View(tag);
+        }
+
 
         
-        public async Task<IActionResult> AnswerQuestion(int questionId)
-        {
-            //List<Question> questionsList = _context.Question.ToList();
-
-            Question question = await _context.Question
-                .Include(q => q.Comments).ThenInclude(c => c.User)
-                .Include(q => q.Answers)
-                    .ThenInclude(a => a.User)
-                    //.ThenInclude(a => a.AnswerAndVote)
-                    //.ThenInclude(av => av.Vote)
-                .FirstAsync(q => q.Id == questionId);
-            return View(question);
-        }
+        
 
         public async Task<IActionResult> MyPosts()
         {
@@ -374,6 +372,11 @@ namespace SD_330_W22SD_Assignment.Controllers
                     }
                     else
                     {
+                        CorrectAnswer correctAnswer = new CorrectAnswer();
+                        correctAnswer.Answer = answer;
+                        correctAnswer.AnswerId = answer.Id;
+                        correctAnswer.Question = question;
+                        correctAnswer.QuestionId = question.Id;
                         question.CorrectAnswer.Answer = answer;
                         question.CorrectAnswer.Answer.Id = answer.Id;
 
@@ -388,6 +391,20 @@ namespace SD_330_W22SD_Assignment.Controllers
             
 
             return RedirectToAction("MyPost", new { questionId });
+        }
+
+        public async Task<IActionResult> AnswerQuestion(int questionId)
+        {
+            //List<Question> questionsList = _context.Question.ToList();
+
+            Question question = await _context.Question
+                .Include(q => q.Comments).ThenInclude(c => c.User)
+                .Include(q => q.Answers)
+                    .ThenInclude(a => a.User)
+                //.ThenInclude(a => a.AnswerAndVote)
+                //.ThenInclude(av => av.Vote)
+                .FirstAsync(q => q.Id == questionId);
+            return View(question);
         }
 
         [HttpPost]
@@ -467,8 +484,11 @@ namespace SD_330_W22SD_Assignment.Controllers
             {
                 try
                 {
-                    Question selectedQuestion = await _context.Question.Include(q => q.Answers)
-                        .ThenInclude(a => a.Comments).ThenInclude(c => c.User)
+                    Question selectedQuestion = await _context.Question
+                        .Include(q => q.Answers)
+                            .ThenInclude(a => a.Comments).ThenInclude(c => c.User)
+                        .Include(q => q.Comments)
+                            .ThenInclude(c => c.User)
                         .FirstAsync(q => q.Id == questionId);
                     //Answer commentedAnswer = await _context.Answer
                     //    .Include(a => a.User).Include(a => a.Comments).ThenInclude(c => c.User)
@@ -486,7 +506,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                     submittedComment.AnswerId = commentedAnswer.Id;
 
                     commentedAnswer.Comments.Add(submittedComment);
-                    
+                    _context.CommentToAnswer.Add(submittedComment);
                     
 
                     _context.SaveChanges();

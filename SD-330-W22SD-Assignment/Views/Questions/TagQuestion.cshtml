@@ -1,6 +1,6 @@
-﻿@using Microsoft.AspNetCore.Authorization
+﻿@model Tag
+@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
-@model IEnumerable<SD_330_W22SD_Assignment.Models.Question>
 
 @{
     Pager pager = new Pager();
@@ -12,18 +12,10 @@
     }
 }
 
-
-<h1>Stack Overflow</h1>
-<p><a asp-action="AddRole">Admin Access</a></p>
-<form>
-    <button asp-action="PostQuestion">Post a question</button>
-</form>
-<h3><a asp-action="MyPosts">My Posts</a></h3>
-<h3><a asp-action="AdminPage">Admin Page</a></h3>
-
 <div>
-    @foreach(Question question in Model)
+    @foreach(Question question in Model.Questions)
     {
+        
         <div>
             <h5><a asp-action="MyPost" asp-route-questionId="@question.Id">Title: @question.Title</a></h5>
             <p>Posted by: @question.User.UserName | Reputation: @question.User.Reputation.Score</p>
@@ -68,5 +60,4 @@
             </ul>
         }
     </div>
-
 </div>

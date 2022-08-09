@@ -13,6 +13,6 @@ namespace SD_330_W22SD_Assignment.Models
         public ICollection<CommentToAnswer> Comments { get; set; } = new HashSet<CommentToAnswer>();
         public ICollection<Vote> Votes { get; set; } = new HashSet<Vote>();
         public ICollection<AnswerAndVote> AnswerAndVote { get; set; }
-        public CorrectAnswer CorrectAnswer { get; set; } = new CorrectAnswer();
+        public CorrectAnswer? CorrectAnswer { get; set; }
     }
 }
