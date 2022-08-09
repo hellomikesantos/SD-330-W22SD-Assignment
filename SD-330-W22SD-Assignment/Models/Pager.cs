@@ -21,9 +21,6 @@
             int endPage = currentPage + 4;
             int totalPages = (int)Math.Ceiling((decimal)total / (decimal)pageSize);
             
-
-            
-
             if(startPage <= 0)
             {
                 endPage = endPage - (startPage - 1);

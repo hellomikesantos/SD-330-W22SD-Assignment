@@ -120,6 +120,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 .Include(q => q.User)
                     .ThenInclude(u => u.Reputation)
                 .Include(q => q.Answers)
+                .Include(q => q.Tags)
                 .OrderByDescending(q => q.Id);
             int pageSize = 10;
             int questionCount = applicationDbContext.Count();
@@ -251,7 +252,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostQuestion(string? title, string? body, string? tagsString)
+        public async Task<IActionResult> PostQuestion(string? title, string? body, string? tags)
         {
             if (title != null && body != null)
             {
@@ -272,9 +273,9 @@ namespace SD_330_W22SD_Assignment.Controllers
                     _context.Question.Add(q);
                     
                     _context.SaveChanges();
-                    if(tagsString != null)
+                    if(tags != null)
                     {
-                        foreach(string tagString in tagsString.Split(','))
+                        foreach (string tagString in tags.Split(','))
                         {
                             //Question_Tag qTag = new Question_Tag();
                             //qTag.Tag.Name = tagString;
@@ -288,16 +289,19 @@ namespace SD_330_W22SD_Assignment.Controllers
                             //_context.SaveChanges();
 
                             //Tag tagDb = await _context.Tag.FirstAsync(t => t.Id == tag.Id);
-                            //tagDb.Name = tagString;
-                            //q.Tags.Add(tagDb);
-                            //tagDb.Questions.Add(q);
-                            //_context.SaveChanges();
+                            Tag newTag = new Tag();
+                            newTag.Name = tagString;
+                            q.Tags.Add(newTag);
+                            newTag.Questions.Add(q);
+
+                            _context.Tag.Add(newTag);
+                            _context.SaveChanges();
                         }
                     }
                 }
                 catch(Exception ex)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
             return RedirectToAction("Index");
@@ -378,7 +382,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 }
                 catch(Exception ex)
                 {
-                    return RedirectToAction("Error", new { ex });
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
             
@@ -418,7 +422,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return RedirectToAction("Error", new { ex });
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
@@ -452,9 +456,9 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     return RedirectToAction("AnswerQuestion", new { questionId });
                 }
-                catch
+                catch(Exception ex)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
 
@@ -490,9 +494,9 @@ namespace SD_330_W22SD_Assignment.Controllers
                     return RedirectToAction("AnswerQuestion", new { questionId });
 
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Error", new { ex.Message});
                 }
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
@@ -551,9 +555,9 @@ namespace SD_330_W22SD_Assignment.Controllers
                     }
                     
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
