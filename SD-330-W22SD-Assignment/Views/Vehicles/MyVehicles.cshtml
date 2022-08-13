@@ -1,7 +1,0 @@
-﻿@model ApplicationUser
-
-<h1>@Model.UserName owns these Vehicles</h1>
-
-@foreach(Vehicle v in @Model.Vehicles){
-    <div>@v.Make @v.Year @v.Model</div>
-}

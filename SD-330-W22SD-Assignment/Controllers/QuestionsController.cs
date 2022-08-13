@@ -45,7 +45,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                     ViewBag.Message = $"Added new role '{roleName}'";
                     return View();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return RedirectToAction("Error");
                 }
@@ -124,7 +124,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 .OrderByDescending(q => q.Id);
             int pageSize = 10;
             int questionCount = applicationDbContext.Count();
-           
+
             Pager pager = new Pager(questionCount, page, pageSize);
             int skips = (page - 1) * pageSize;
             var currentItems = applicationDbContext.Skip(skips).Take(pager.PageCount);
@@ -149,7 +149,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(int? questionId, string? vote)
         {
-            if(questionId != null)
+            if (questionId != null)
             {
                 try
                 {
@@ -182,10 +182,10 @@ namespace SD_330_W22SD_Assignment.Controllers
                                 {
                                     return RedirectToAction("Index");
                                 }
-                            break;
+                                break;
                         };
                     }
-                    else if(question.User.Id != user.Id)
+                    else if (question.User.Id != user.Id)
                     {
                         switch (vote)
                         {
@@ -195,7 +195,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                                     return RedirectToAction("Index");
                                 }
                                 newVote.UpVote = true;
-                                foreach(Vote v in question.Votes)
+                                foreach (Vote v in question.Votes)
                                 {
                                     if (v.User.Id == user.Id && v.DownVote)
                                     {
@@ -221,7 +221,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                                 break;
                         };
 
-                        
+
 
                         newVote.User = user;
                         newVote.UserId = user.Id;
@@ -241,10 +241,10 @@ namespace SD_330_W22SD_Assignment.Controllers
                 }
             }
             return RedirectToAction("Index");
-            
+
         }
 
- 
+
         public IActionResult PostQuestion()
         {
             Question question = new Question();
@@ -271,24 +271,12 @@ namespace SD_330_W22SD_Assignment.Controllers
                     user.Questions.Add(q);
 
                     _context.Question.Add(q);
-                    
+
                     _context.SaveChanges();
-                    if(tags != null)
+                    if (tags != null)
                     {
                         foreach (string tagString in tags.Split(','))
                         {
-                            //Question_Tag qTag = new Question_Tag();
-                            //qTag.Tag.Name = tagString;
-                            //qTag.TagId = qTag.Tag.Id;
-                            //qTag.Tag.QuestionTags.Add(qTag);
-
-                            //qTag.Question = q;
-                            //qTag.QuestionId = q.Id;
-                            //qTag.Question.QuestionTags.Add(qTag);
-                            //_context.QuestionTag.Add(qTag);
-                            //_context.SaveChanges();
-
-                            //Tag tagDb = await _context.Tag.FirstAsync(t => t.Id == tag.Id);
                             Tag newTag = new Tag();
                             newTag.Name = tagString;
                             q.Tags.Add(newTag);
@@ -299,7 +287,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                         }
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return RedirectToAction("Error", new { ex.Message });
                 }
@@ -318,8 +306,8 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
 
-        
-        
+
+
 
         public async Task<IActionResult> MyPosts()
         {
@@ -333,7 +321,7 @@ namespace SD_330_W22SD_Assignment.Controllers
             return View(user);
         }
 
-        
+
         public async Task<IActionResult> MyPost(int? questionId)
         {
             Question question = await _context.Question
@@ -343,7 +331,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 .Include(q => q.Comments)
                 .Include(q => q.CorrectAnswer)
                 .FirstAsync(q => q.Id == questionId);
-            
+
 
             return View(question);
         }
@@ -351,7 +339,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         [HttpPost]
         public async Task<IActionResult> MyPost(int? answerId, int? questionId)
         {
-            if(answerId != null && questionId != null)
+            if (answerId != null && questionId != null)
             {
                 try
                 {
@@ -366,7 +354,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                     string userName = User.Identity.Name;
                     ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
 
-                    if(user.Id != question.User.Id)
+                    if (user.Id != question.User.Id)
                     {
                         return RedirectToAction("Index");
                     }
@@ -381,21 +369,20 @@ namespace SD_330_W22SD_Assignment.Controllers
                         question.CorrectAnswer.Answer.Id = answer.Id;
 
                         _context.SaveChanges();
-                    }   
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return RedirectToAction("Error", new { ex.Message });
                 }
             }
-            
+
 
             return RedirectToAction("MyPost", new { questionId });
         }
 
         public async Task<IActionResult> AnswerQuestion(int questionId)
         {
-            //List<Question> questionsList = _context.Question.ToList();
 
             Question question = await _context.Question
                 .Include(q => q.Comments).ThenInclude(c => c.User)
@@ -433,7 +420,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                     user.Answers.Add(submittedAnswer);
 
                     _context.Answer.Add(submittedAnswer);
-                    
+
 
                     _context.SaveChanges();
                 }
@@ -448,7 +435,7 @@ namespace SD_330_W22SD_Assignment.Controllers
         public async Task<IActionResult> AddComment(int? questionId, int? answerId, string? comment)
         {
             // Comment to a question
-            if(questionId != null && comment != null && answerId == null)
+            if (questionId != null && comment != null && answerId == null)
             {
                 try
                 {
@@ -465,22 +452,22 @@ namespace SD_330_W22SD_Assignment.Controllers
                     submittedComment.User = user;
                     submittedComment.UserId = user.Id;
                     submittedComment.Question = commentedQuestion;
-                    submittedComment.QuestionId = commentedQuestion.Id;                    
+                    submittedComment.QuestionId = commentedQuestion.Id;
 
                     commentedQuestion.Comments.Add(submittedComment);
-                    
+
                     _context.SaveChanges();
 
                     return RedirectToAction("AnswerQuestion", new { questionId });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return RedirectToAction("Error", new { ex.Message });
                 }
             }
 
             // Comment to an Answer
-            if(answerId != null && comment != null && questionId != null)
+            if (answerId != null && comment != null && questionId != null)
             {
                 try
                 {
@@ -507,7 +494,7 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     commentedAnswer.Comments.Add(submittedComment);
                     _context.CommentToAnswer.Add(submittedComment);
-                    
+
 
                     _context.SaveChanges();
 
@@ -516,7 +503,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return RedirectToAction("Error", new { ex.Message});
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
@@ -524,7 +511,7 @@ namespace SD_330_W22SD_Assignment.Controllers
 
         public async Task<IActionResult> VoteAnswer(int? answerId, string? vote, int questionId)
         {
-            if(answerId != null && vote != null)
+            if (answerId != null && vote != null)
             {
                 try
                 {
@@ -539,7 +526,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                     string userName = User.Identity.Name;
                     ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
 
-                    if(answer.User.Id == user.Id)
+                    if (answer.User.Id == user.Id)
                     {
                         switch (vote)
                         {
@@ -555,8 +542,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                                     return RedirectToAction("AnswerQuestion", new { questionId });
                                 }
                                 break;
-                                //default:
-                                //    return RedirectToAction("AnswerQuestion", new { questionId });
                         };
                     }
                     else
@@ -573,7 +558,7 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                         _context.SaveChanges();
                     }
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -589,156 +574,6 @@ namespace SD_330_W22SD_Assignment.Controllers
         {
 
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, ExceptionMessage = message });
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-        // GET: Questions/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.Question == null)
-            {
-                return NotFound();
-            }
-
-            var question = await _context.Question
-                .Include(q => q.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-
-            return View(question);
-        }
-
-        // GET: Questions/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
-        }
-
-        // POST: Questions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Body,UserId")] Question question)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(question);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", question.UserId);
-            return View(question);
-        }
-
-        // GET: Questions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Question == null)
-            {
-                return NotFound();
-            }
-
-            var question = await _context.Question.FindAsync(id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", question.UserId);
-            return View(question);
-        }
-
-        // POST: Questions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,UserId")] Question question)
-        {
-            if (id != question.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(question);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuestionExists(question.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", question.UserId);
-            return View(question);
-        }
-
-        // GET: Questions/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Question == null)
-            {
-                return NotFound();
-            }
-
-            var question = await _context.Question
-                .Include(q => q.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-
-            return View(question);
-        }
-
-        // POST: Questions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Question == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Question'  is null.");
-            }
-            var question = await _context.Question.FindAsync(id);
-            if (question != null)
-            {
-                _context.Question.Remove(question);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool QuestionExists(int id)
-        {
-          return (_context.Question?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -15,11 +15,12 @@
 
 <h1>Stack Overflow</h1>
 <p><a asp-action="AddRole">Admin Access</a></p>
+<p><a asp-action="AdminPage">Admin Page</a></p>
 <form>
     <button asp-action="PostQuestion">Post a question</button>
 </form>
 <h3><a asp-action="MyPosts">My Posts</a></h3>
-<h3><a asp-action="AdminPage">Admin Page</a></h3>
+
 
 <div>
     @foreach(Question question in Model)
