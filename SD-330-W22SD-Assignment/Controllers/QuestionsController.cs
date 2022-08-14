@@ -47,10 +47,10 @@ namespace SD_330_W22SD_Assignment.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return RedirectToAction("Error");
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
-            return RedirectToAction("Error");
+            return View();
         }
 
         public IActionResult AddUserToRole()
@@ -61,11 +61,9 @@ namespace SD_330_W22SD_Assignment.Controllers
             return View(vm);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> AddUserToRole(string userId, string roleId)
         {
-
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
             IdentityRole role = await _roleManager.FindByIdAsync(roleId);
 
@@ -76,6 +74,7 @@ namespace SD_330_W22SD_Assignment.Controllers
                 await _userManager.AddToRoleAsync(user, role.Name);
                 await _context.SaveChangesAsync();
             }
+
             UserAndRole vm = new UserAndRole(
             _context.Users.ToList(),
             _context.Roles.ToList());
@@ -97,7 +96,6 @@ namespace SD_330_W22SD_Assignment.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        //[Authorize("Admin")]
         [HttpPost]
         public async Task<IActionResult> AdminPage(int questionId)
         {
@@ -111,7 +109,6 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
         // GET: Questions
-
         [AllowAnonymous]
         public async Task<IActionResult> Index(int page = 1)
         {
@@ -217,11 +214,8 @@ namespace SD_330_W22SD_Assignment.Controllers
                                         question.Votes.Remove(v);
                                     }
                                 }
-
                                 break;
                         };
-
-
 
                         newVote.User = user;
                         newVote.UserId = user.Id;
@@ -235,15 +229,13 @@ namespace SD_330_W22SD_Assignment.Controllers
                         _context.SaveChanges();
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Error", new { ex.Message });
                 }
             }
             return RedirectToAction("Index");
-
         }
-
 
         public IActionResult PostQuestion()
         {
@@ -271,7 +263,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                     user.Questions.Add(q);
 
                     _context.Question.Add(q);
-
                     _context.SaveChanges();
                     if (tags != null)
                     {
@@ -306,9 +297,6 @@ namespace SD_330_W22SD_Assignment.Controllers
         }
 
 
-
-
-
         public async Task<IActionResult> MyPosts()
         {
             string userName = User.Identity.Name;
@@ -331,8 +319,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                 .Include(q => q.Comments)
                 .Include(q => q.CorrectAnswer)
                 .FirstAsync(q => q.Id == questionId);
-
-
             return View(question);
         }
 
@@ -376,8 +362,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                     return RedirectToAction("Error", new { ex.Message });
                 }
             }
-
-
             return RedirectToAction("MyPost", new { questionId });
         }
 
@@ -477,9 +461,6 @@ namespace SD_330_W22SD_Assignment.Controllers
                         .Include(q => q.Comments)
                             .ThenInclude(c => c.User)
                         .FirstAsync(q => q.Id == questionId);
-                    //Answer commentedAnswer = await _context.Answer
-                    //    .Include(a => a.User).Include(a => a.Comments).ThenInclude(c => c.User)
-                    //    .FirstAsync(a => a.Id == answerId);
 
                     Answer commentedAnswer = selectedQuestion.Answers.First(a => a.Id == answerId);
                     CommentToAnswer submittedComment = new CommentToAnswer();
@@ -494,7 +475,6 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                     commentedAnswer.Comments.Add(submittedComment);
                     _context.CommentToAnswer.Add(submittedComment);
-
 
                     _context.SaveChanges();
 
@@ -558,7 +538,6 @@ namespace SD_330_W22SD_Assignment.Controllers
 
                         _context.SaveChanges();
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -567,7 +546,6 @@ namespace SD_330_W22SD_Assignment.Controllers
             }
             return RedirectToAction("AnswerQuestion", new { questionId });
         }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(string message)

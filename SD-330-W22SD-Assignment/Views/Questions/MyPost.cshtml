@@ -3,7 +3,6 @@
 @foreach(Answer answer in Model.Answers)
 {
     <div>
-        
         @if(Model.CorrectAnswer.AnswerId == answer.Id)
         {
             <h5 style="background-color:yellow">Correct Answer</h5>
